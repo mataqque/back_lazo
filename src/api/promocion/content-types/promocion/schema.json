@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "promocions",
+  "info": {
+    "singularName": "promocion",
+    "pluralName": "promocions",
+    "displayName": "Promocion"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "richtext"
+    }
+  }
+}
