@@ -66,6 +66,11 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::tipo-producto.tipo-producto"
+    },
+    "productos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::producto.producto"
     }
   }
 }

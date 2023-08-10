@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "listaips",
+  "info": {
+    "singularName": "listaip",
+    "pluralName": "listaips",
+    "displayName": "Listaip",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "ip": {
+      "type": "string"
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "attempts": {
+      "type": "integer"
+    }
+  }
+}
