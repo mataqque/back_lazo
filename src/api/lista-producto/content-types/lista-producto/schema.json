@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lista_productos",
+  "info": {
+    "singularName": "lista-producto",
+    "pluralName": "lista-productos",
+    "displayName": "ListaProducto",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "address": {
+      "type": "string"
+    },
+    "adicionaldata": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "hour": {
+      "type": "time"
+    },
+    "date": {
+      "type": "date"
+    },
+    "name": {
+      "type": "string"
+    },
+    "users_permissions_user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "lista_productos"
+    },
+    "ventaproductos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ventaproducto.ventaproducto",
+      "mappedBy": "lista_producto"
+    },
+    "paid": {
+      "type": "boolean",
+      "default": false
+    },
+    "delivered": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

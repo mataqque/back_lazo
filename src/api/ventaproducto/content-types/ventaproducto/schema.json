@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ventaproductos",
+  "info": {
+    "singularName": "ventaproducto",
+    "pluralName": "ventaproductos",
+    "displayName": "ventaproducto",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "precioUnitario": {
+      "required": true,
+      "type": "decimal"
+    },
+    "totalVenta": {
+      "type": "decimal",
+      "required": true
+    },
+    "lista_producto": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lista-producto.lista-producto",
+      "inversedBy": "ventaproductos"
+    },
+    "MetodoPago": {
+      "type": "string"
+    },
+    "Selled": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -1,7 +1,22 @@
-/**
- * mercadopago router
- */
-
-import { factories } from '@strapi/strapi';
-
-export default factories.createCoreRouter('api::mercadopago.mercadopago');
+export default {
+	routes: [
+		{
+			method: 'POST',
+			path: '/mercadopago',
+			handler: 'mercadopago.createPayment',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
+			path: '/mercadopago/form',
+			handler: 'mercadopago.addForm',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+	],
+};

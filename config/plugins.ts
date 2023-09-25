@@ -10,4 +10,11 @@ export default ({ env }) => ({
 			settings: {},
 		},
 	},
+	upload: {
+		config: {
+			breakpoints: {
+				xsmall: 64,
+			},
+		},
+	},
 });

@@ -20,6 +20,33 @@ export default {
 		},
 		{
 			method: 'POST',
+			path: '/user/recoverypassword',
+			handler: 'user.recoveryPassword',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
+			path: '/user/changepasswordcode',
+			handler: 'user.changePasswordCode',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
+			path: '/user/codeverification',
+			handler: 'user.codeVerification',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
 			path: '/user/sendmessage',
 			handler: 'user.sendMailtoVerify',
 			config: {
@@ -31,6 +58,15 @@ export default {
 			method: 'POST',
 			path: '/user/create',
 			handler: 'user.createAccount',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
+			path: '/user/creategoogle',
+			handler: 'user.createAccountGoogle',
 			config: {
 				policies: [],
 				middlewares: [],

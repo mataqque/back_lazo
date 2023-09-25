@@ -43,8 +43,9 @@
     "Resume": {
       "type": "richtext"
     },
-    "Quatity": {
-      "type": "integer"
+    "Quantity": {
+      "type": "integer",
+      "default": 1
     },
     "Discount": {
       "type": "integer",
@@ -71,6 +72,18 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::producto.producto"
+    },
+    "cant": {
+      "type": "integer",
+      "default": 1
+    },
+    "rank": {
+      "type": "integer"
+    },
+    "size_producto": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::size-producto.size-producto"
     }
   }
 }

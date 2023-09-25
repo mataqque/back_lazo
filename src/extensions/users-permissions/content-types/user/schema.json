@@ -66,7 +66,30 @@
       "configurable": false
     },
     "attempts": {
-      "type": "integer"
+      "type": "integer",
+      "required": false
+    },
+    "lista_productos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::lista-producto.lista-producto",
+      "mappedBy": "users_permissions_user"
+    },
+    "firstname": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    },
+    "cel": {
+      "type": "string"
+    },
+    "google_id": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string",
+      "maxLength": 7
     }
   }
 }
