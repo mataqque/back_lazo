@@ -10,6 +10,7 @@
     "strapi": "strapi"
   },
   "devDependencies": {
+    "@types/koa": "^2.13.9",
     "@types/mercadopago": "^1.5.8",
     "@types/node": "^20.6.3"
   },
@@ -24,6 +25,7 @@
     "ip": "^1.1.8",
     "mercadopago": "^1.5.17",
     "mysql": "2.18.1",
+    "mysql2": "^3.6.1",
     "prettier": "^3.0.0",
     "strapi-plugin-generate-data": "^1.0.23",
     "strapi-plugin-responsive-image": "^1.1.0",

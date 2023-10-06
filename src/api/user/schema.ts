@@ -9,12 +9,10 @@ export const SchemaUser = yup.object().shape({
 });
 
 export const SchemaUserGoogle = yup.object().shape({
-	email: yup.string().email().required(),
-	firstname: yup.string().required(),
-	google_id: yup.string().required(),
-	role: yup.number(),
 	username: yup.string().required(),
-	provider: yup.string().required(),
+	firstname: yup.string().required(),
+	email: yup.string().email().required(),
+	// role: yup.number(),
 });
 
 // email: 'mataqque.100@gmail.com';

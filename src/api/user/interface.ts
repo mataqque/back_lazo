@@ -1,10 +1,8 @@
 export interface IUserRequestGoogle {
-	google_id: string;
-	username: string;
-	firstname: string;
-	email: string;
-	role: number;
-	provider: string;
+	username?: string;
+	firstname?: string;
+	email?: string;
+	// role?: number;
 }
 
 export interface IUserGoogle {

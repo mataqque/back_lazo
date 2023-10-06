@@ -12,8 +12,9 @@ import { IUserDatabase, IUserRequestGoogle } from '../interface';
 import { changePasswordSchema, codeVerificationSchema, credentialSchema, recoveryPasswordSchema } from './schema';
 import axios from 'axios';
 import { generateRandomNumber } from '../../../helpers/helpers';
+import { Context } from 'koa';
 
-const COUNTATTEMPS = 4;
+const COUNT_ATTEMPTS = 4;
 
 async function blockedAttempts(user: IUserDatabase) {
 	const entry = await strapi.entityService.update('plugin::users-permissions.user', user.id, {
@@ -23,18 +24,18 @@ async function blockedAttempts(user: IUserDatabase) {
 	});
 	return {
 		message: 'blocked Email',
-		verificated: false,
+		verified: false,
 	};
 }
-async function updateAttemps(user: IUserDatabase, init = false) {
-	if (user.attempts < COUNTATTEMPS) {
+async function updateAttempts(user: IUserDatabase, init = false) {
+	if (user.attempts < COUNT_ATTEMPTS) {
 		const entry = await strapi.entityService.update('plugin::users-permissions.user', user.id, {
 			data: {
 				attempts: init ? 0 : user.attempts + 1,
 			},
 		});
 		return {
-			verificated: false,
+			verified: false,
 		};
 	}
 }
@@ -42,9 +43,11 @@ async function updateAttemps(user: IUserDatabase, init = false) {
 function dataResolve(user: IUserDatabase) {
 	return {
 		id: user.id,
-		verificated: true,
+		verified: true,
 		username: user.username,
 		email: user.email,
+		firstname: user.firstname,
+		lastname: user.lastname,
 	};
 }
 
@@ -61,7 +64,7 @@ async function sendMessage(cel: string, message: string) {
 			return response.data;
 		})
 		.catch(error => {
-			return { message: error.message };
+			return { message: error.message, status: 404 };
 		});
 	return response;
 }
@@ -81,14 +84,14 @@ export default {
 			const validate = credentialSchema.validateSync(ctx.request.body);
 			const { email, password } = pick(validate, Object.keys(credentialSchema.fields));
 			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({ where: { email: email } });
-			if (!user || user.password == null || user.blocked == true) return { verificated: false };
-			if (user.attempts >= COUNTATTEMPS) return blockedAttempts(user);
+			if (!user || user.password == null || user.blocked == true) return { verified: false };
+			if (user.attempts >= COUNT_ATTEMPTS) return blockedAttempts(user);
 			const validPassword = await strapi.plugins['users-permissions'].services.user.validatePassword(password, user.password);
 			if (validPassword === true) {
-				updateAttemps(user, true);
+				updateAttempts(user, true);
 				return dataResolve(user);
 			}
-			if (validPassword === false) return updateAttemps(user);
+			if (validPassword === false) return updateAttempts(user);
 		} catch (err) {
 			return { message: err.message };
 		}
@@ -99,11 +102,11 @@ export default {
 			const { email, code } = pick(validate, Object.keys(codeVerificationSchema.fields));
 			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({ where: { email: email } });
 			console.log(user);
-			if (!user) return { verificated: false };
-			if (user.code !== code) return { verificated: false };
+			if (!user) return { verified: false };
+			if (user.code !== code) return { verified: false };
 			if (user.code == code) {
 				return {
-					verificated: true,
+					verified: true,
 					status: 200,
 				};
 			}
@@ -116,7 +119,7 @@ export default {
 			const validate = changePasswordSchema.validateSync(ctx.request.body);
 			const { email, code, password } = pick(validate, Object.keys(changePasswordSchema.fields));
 			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({ where: { email: email } });
-			if (user.code !== code) return { verificated: false };
+			if (user.code !== code) return { verified: false };
 			const updatePassword = await strapi.entityService.update('plugin::users-permissions.user', user.id, {
 				data: {
 					password: password,
@@ -125,17 +128,19 @@ export default {
 					attempts: 0,
 				},
 			});
-			return { verificated: true, status: 200, type: 'changed' };
+			return { verified: true, status: 200, type: 'changed' };
 		} catch (err) {
 			return { message: err.message };
 		}
 	},
-	recoveryPassword: async (ctx, next) => {
+	recoveryPassword: async (ctx: any, next) => {
 		try {
 			const validate = recoveryPasswordSchema.validateSync(ctx.request.body);
 			const { email } = pick(validate, Object.keys(recoveryPasswordSchema.fields));
 			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({ where: { email: email } });
+			console.table(user);
 			if (!user) return { message: 'User not found', status: 401 };
+			if (user && !user.cel) return { message: 'User Cel not found', status: 401 };
 			//
 			const code: string = generateRandomNumber(6, 6);
 			const updateCode = await strapi.entityService.update('plugin::users-permissions.user', user.id, {
@@ -143,9 +148,10 @@ export default {
 					code: code,
 				},
 			});
-			sendMessage(user.cel, `Hola ${user.firstname}, su código de recuperacion es: ${code}`);
-
-			return { verificated: true, status: 200, type: 'changepassword' };
+			const message = await sendMessage(user.cel, `Hola ${user.firstname}, su código de recuperacion es: ${code}`);
+			console.log(message);
+			if (message.status == 404) return { message: message.message, status: message.status };
+			return { verified: true, status: 200, type: 'changepassword' };
 		} catch (err) {
 			return { message: err.message, status: 401 };
 		}
@@ -175,45 +181,42 @@ export default {
 			if (user && user.email == filterdata.email) return { status: 405, message: 'Email ya registrado' };
 
 			const newUser = await strapi.entityService.create('plugin::users-permissions.user', {
-				data: filterdata,
+				data: { ...filterdata, provider: 'local' },
 			});
 
-			return { status: 200, message: 'registro Exitoso', require };
+			return { status: 200, message: 'registro Exitoso' };
 		} catch (err) {
 			return { status: 405, message: err.message };
 		}
 	},
 	createAccountGoogle: async (ctx, next) => {
 		try {
-			const dataUser: IUserRequestGoogle = ctx.request.body;
-			async function dataUserGoogle(data) {
-				const showUser = await strapi.entityService.findMany('plugin::users-permissions.user', {
-					populate: ['role'],
-					filters: {
-						email: data.email,
-					},
-				});
-				return showUser[0];
-			}
-			if (dataUser) {
-				const validate = SchemaUserGoogle.validateSync(dataUser);
-				const filteredData = pick(validate, Object.keys(SchemaUserGoogle.fields));
-				const verifyuser = await strapi.db.query('plugin::users-permissions.user').findOne({
-					where: { email: validate.email },
-				});
+			const validate = SchemaUserGoogle.validateSync(ctx.request.body);
+			const filterdata: IUserRequestGoogle = pick(validate, Object.keys(SchemaUserGoogle.fields));
 
-				if (verifyuser && verifyuser.username == filteredData.email && verifyuser.provider == 'google') {
-					return dataUserGoogle(filteredData);
-				} else {
-					const newUser = await strapi.entityService.create('plugin::users-permissions.user', {
-						data: filteredData,
-					});
+			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({
+				where: { email: filterdata.email },
+			});
 
-					return dataUserGoogle(filteredData);
-				}
-			} else {
-				return { status: 405, message: 'datos inclompletos' };
-			}
+			if (user && user.email == filterdata.email && user.provider == 'local') return { status: 405, message: 'Email ya registrado' };
+			if (user && user.email == filterdata.email) return { status: 200, data: dataResolve(user) };
+
+			const newUser = await strapi.entityService.create('plugin::users-permissions.user', {
+				data: { ...filterdata, provider: 'google' },
+			});
+			return { status: 200, data: dataResolve(newUser) };
+			// 	if (verifyuser && verifyuser.username == filteredData.email && verifyuser.provider == 'google') {
+			// 		return dataUserGoogle(filteredData);
+			// 	} else {
+			// 		const newUser = await strapi.entityService.create('plugin::users-permissions.user', {
+			// 			data: filteredData,
+			// 		});
+
+			// 		return dataUserGoogle(filteredData);
+			// 	}
+			// } else {
+			// 	return { status: 405, message: 'datos inclompletos' };
+			// }
 		} catch (err) {
 			//removed
 			return { message: err };
@@ -235,7 +238,7 @@ export default {
 	// 			const validPassword = await strapi.plugins['users-permissions'].services.user.validatePassword(password, entries.password);
 	// 			if (validPassword) {
 	// 				return {
-	// 					verificated: true,
+	// 					verified: true,
 	// 					username: entries.username,
 	// 					email: entries.email,
 	// 				};
@@ -247,7 +250,7 @@ export default {
 	// 				});
 	// 				return {
 	// 					findIp: findIp,
-	// 					verificated: false,
+	// 					verified: false,
 	// 				};
 	// 			}
 	// 		} else if (findIp['attempts'] >= 4) {
@@ -258,7 +261,7 @@ export default {
 	// 			});
 	// 			return {
 	// 				message: 'blocked IP',
-	// 				verificated: false,
+	// 				verified: false,
 	// 			};
 	// 		} else {
 	// 			await strapi.entityService.create('api::listaip.listaip', {
