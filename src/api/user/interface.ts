@@ -43,4 +43,7 @@ export interface IUserDatabase {
 	cel?: null;
 	code: string;
 	google_id: string;
+	gender?: string;
+	birthday?: null;
+	role?: null;
 }

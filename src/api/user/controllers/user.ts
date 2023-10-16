@@ -6,7 +6,7 @@ const maxFailedAttempts = 3;
 const blockTime = 600000; // 10 minutos
 const HOST_API_WPP = process.env.HOST_API_WPP;
 import { factories } from '@strapi/strapi';
-import { SchemaUser, SchemaUserGoogle } from '../schema';
+import { SchemaUser, SchemaUserGoogle, getSchemaUser, updateUser } from '../schema';
 import { pick } from 'lodash';
 import { IUserDatabase, IUserRequestGoogle } from '../interface';
 import { changePasswordSchema, codeVerificationSchema, credentialSchema, recoveryPasswordSchema } from './schema';
@@ -48,6 +48,9 @@ function dataResolve(user: IUserDatabase) {
 		email: user.email,
 		firstname: user.firstname,
 		lastname: user.lastname,
+		cel: user.cel,
+		gender: user.gender,
+		birthday: user.birthday,
 	};
 }
 
@@ -179,7 +182,6 @@ export default {
 			});
 
 			if (user && user.email == filterdata.email) return { status: 405, message: 'Email ya registrado' };
-
 			const newUser = await strapi.entityService.create('plugin::users-permissions.user', {
 				data: { ...filterdata, provider: 'local' },
 			});
@@ -189,6 +191,38 @@ export default {
 			return { status: 405, message: err.message };
 		}
 	},
+	updateUser: async (ctx, next) => {
+		try {
+			const validate = updateUser.validateSync(ctx.request.body);
+			const filterdata = pick(validate, Object.keys(updateUser.fields));
+			console.log(filterdata);
+			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({
+				where: { email: validate.email },
+			});
+			const newUser = await strapi.entityService.update('plugin::users-permissions.user', user.id, {
+				data: { ...filterdata, provider: 'local' },
+			});
+
+			return { status: 200, message: 'Actualizacion Exitosa' };
+		} catch (err) {
+			return { status: 405, message: err.message };
+		}
+	},
+	getUser: async (ctx, next) => {
+		try {
+			const validate = getSchemaUser.validateSync(ctx.request.body);
+			const filterdata = pick(validate, Object.keys(getSchemaUser.fields));
+			console.log(filterdata);
+			const user: IUserDatabase = await strapi.db.query('plugin::users-permissions.user').findOne({
+				where: { email: validate.email },
+			});
+			dataResolve(user);
+			return { status: 200, data: dataResolve(user) };
+		} catch (err) {
+			return { status: 405, message: err.message };
+		}
+	},
+
 	createAccountGoogle: async (ctx, next) => {
 		try {
 			const validate = SchemaUserGoogle.validateSync(ctx.request.body);

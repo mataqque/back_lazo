@@ -8,6 +8,18 @@ export const SchemaUser = yup.object().shape({
 	password: yup.string().required(),
 });
 
+export const getSchemaUser = yup.object().shape({
+	email: yup.string().email().required(),
+});
+export const updateUser = yup.object().shape({
+	firstname: yup.string().required(),
+	lastname: yup.string().required(),
+	email: yup.string().email().required(),
+	cel: yup.string().required(),
+	gender: yup.string().required(),
+	birthday: yup.date().required(),
+});
+
 export const SchemaUserGoogle = yup.object().shape({
 	username: yup.string().required(),
 	firstname: yup.string().required(),

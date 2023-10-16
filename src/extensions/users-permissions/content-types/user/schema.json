@@ -90,6 +90,16 @@
     "code": {
       "type": "string",
       "maxLength": 7
+    },
+    "gender": {
+      "type": "enumeration",
+      "enum": [
+        "masculino",
+        "femenino"
+      ]
+    },
+    "birthday": {
+      "type": "date"
     }
   }
 }

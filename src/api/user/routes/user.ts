@@ -65,6 +65,24 @@ export default {
 		},
 		{
 			method: 'POST',
+			path: '/user/update',
+			handler: 'user.updateUser',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
+			path: '/user/me',
+			handler: 'user.getUser',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
 			path: '/user/creategoogle',
 			handler: 'user.createAccountGoogle',
 			config: {
