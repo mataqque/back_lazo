@@ -63,11 +63,6 @@
       "regex": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
       "customField": "plugin::color-picker.color"
     },
-    "tipo_producto": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::tipo-producto.tipo-producto"
-    },
     "productos": {
       "type": "relation",
       "relation": "oneToMany",
@@ -84,6 +79,12 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::size-producto.size-producto"
+    },
+    "categoria": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::categoria.categoria",
+      "inversedBy": "productos"
     }
   }
 }

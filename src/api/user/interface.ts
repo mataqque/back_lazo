@@ -40,7 +40,10 @@ export interface IUserDatabase {
 	attempts: number;
 	firstname: string;
 	lastname?: null;
-	cel?: null;
+	phone?: {
+		phone: string;
+		verified: boolean;
+	};
 	code: string;
 	google_id: string;
 	gender?: string;

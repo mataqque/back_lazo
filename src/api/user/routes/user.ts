@@ -47,6 +47,15 @@ export default {
 		},
 		{
 			method: 'POST',
+			path: '/user/phoneverification',
+			handler: 'user.phoneverification',
+			config: {
+				policies: [],
+				middlewares: [],
+			},
+		},
+		{
+			method: 'POST',
 			path: '/user/sendmessage',
 			handler: 'user.sendMailtoVerify',
 			config: {

@@ -8,12 +8,10 @@ import { pick } from 'lodash';
 
 export default {
 	createPayment: async (ctx, next) => {
-		const { products, form }: { products: any; form: IFormData } = JSON.parse(ctx.request.body);
-		console.log(products);
-		//return id
-
 		try {
-			if (products) {
+			const { products = [], form = {} } = ctx.request.body;
+			console.table(form);
+			if (products && products.length > 0 && form) {
 				const validate = sellSchema.validateSync(form);
 				const filteredData = pick(validate, Object.keys(sellSchema.fields));
 				mercadopage.configure({
@@ -42,28 +40,28 @@ export default {
 							precioUnitario: item.unit_price,
 							totalVenta: item.unit_price * item.quantity,
 							MetodoPago: 'Mercado pago',
-							users_permissions_user: form.id,
 						},
 					});
 				});
 
-				await mercadopage.preferences
+				const res_mercado_libre = await mercadopage.preferences
 					.create({
 						items: dataProducts || [],
-						notification_url: 'https://e720-190-237-16-208.sa.ngrok.io/webhook',
+						// notification_url: 'https://e720-190-237-16-208.sa.ngrok.io/webhook',
 						back_urls: {
-							success: 'http://localhost:3000/success',
-							pending: 'https://e720-190-237-16-208.sa.ngrok.io/pending',
-							failure: 'https://e720-190-237-16-208.sa.ngrok.io/failure',
+							// success: 'http://localhost:3000/success',
+							// pending: 'https://e720-190-237-16-208.sa.ngrok.io/pending',
+							// failure: 'https://e720-190-237-16-208.sa.ngrok.io/failure',
 						},
 					})
 					.then(async (res: any) => {
 						return res;
+					})
+					.catch((err: any) => {
+						console.error(err);
 					});
-
-				// return productosApi;
-				// console.log('form', validate);
-				// return newSell;
+				console.log(res_mercado_libre);
+				return res_mercado_libre;
 			}
 		} catch (error) {
 			return { message: 'error internal:', error };

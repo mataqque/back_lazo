@@ -81,15 +81,8 @@
     "lastname": {
       "type": "string"
     },
-    "cel": {
-      "type": "string"
-    },
     "google_id": {
       "type": "string"
-    },
-    "code": {
-      "type": "string",
-      "maxLength": 7
     },
     "gender": {
       "type": "enumeration",
@@ -100,6 +93,25 @@
     },
     "birthday": {
       "type": "date"
+    },
+    "phone": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::phone.phone",
+      "inversedBy": "user"
+    },
+    "code": {
+      "type": "string"
+    },
+    "photo": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

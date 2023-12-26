@@ -12,12 +12,11 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Namecategoria": {
+    "Name": {
       "type": "string"
     },
     "slug": {
-      "type": "uid",
-      "targetField": "Namecategoria"
+      "type": "uid"
     },
     "description": {
       "type": "richtext"
@@ -33,14 +32,16 @@
         "audios"
       ]
     },
-    "uuid": {
-      "type": "uid",
-      "targetField": "Namecategoria"
-    },
     "parents": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::categoria.categoria"
+    },
+    "productos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::producto.producto",
+      "mappedBy": "categoria"
     }
   }
 }

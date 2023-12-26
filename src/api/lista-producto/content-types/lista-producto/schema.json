@@ -21,12 +21,6 @@
     "email": {
       "type": "string"
     },
-    "hour": {
-      "type": "time"
-    },
-    "date": {
-      "type": "date"
-    },
     "name": {
       "type": "string"
     },
@@ -49,6 +43,12 @@
     "delivered": {
       "type": "boolean",
       "default": false
+    },
+    "date": {
+      "type": "string"
+    },
+    "hour": {
+      "type": "string"
     }
   }
 }

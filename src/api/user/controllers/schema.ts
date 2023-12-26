@@ -19,3 +19,10 @@ export const changePasswordSchema = Yup.object().shape({
 	code: Yup.string().required(),
 	password: Yup.string().required(),
 });
+
+export const phoneVerificationSchema = Yup.object().shape({
+	// phone peru +51 900 000 000
+	phone: Yup.string()
+		.matches(/^51\d{9}$/, 'El formato del número debe ser +51 900 000 000')
+		.required(),
+});
